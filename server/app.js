@@ -18,7 +18,6 @@ import connectDB from "./config/db.js";
 
 // Routes
 import userRoutes from "./routes/userRoutes.js";
-import apiRoute from "./routes/apiCoreRoute.js";
 import storyRouter from "./routes/story.js";
 import imageRouter from "./routes/image.js";
 import getstoryRouter from "./routes/getstory.js";
@@ -45,7 +44,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use("/api", apiRoute);
 app.use("/user", userRoutes);
 app.use("/api", storyRouter);
 app.use("/api", imageRouter);
@@ -72,6 +70,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(process.env.PORT || PORT || 5000, "0.0.0.0", () => {
+app.listen(process.env.PORT || PORT || 6000, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${process.env.PORT || PORT || 5000}`);
 });
