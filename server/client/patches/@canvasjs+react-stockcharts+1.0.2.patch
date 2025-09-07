@@ -1,0 +1,178 @@
+diff --git a/node_modules/@canvasjs/react-stockcharts/canvasjs.stock.react.js b/node_modules/@canvasjs/react-stockcharts/canvasjs.stock.react.js
+index 95cf188..e3f3837 100644
+--- a/node_modules/@canvasjs/react-stockcharts/canvasjs.stock.react.js
++++ b/node_modules/@canvasjs/react-stockcharts/canvasjs.stock.react.js
+@@ -16,92 +16,94 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
+ /*tslint:disable*/  
+ /*eslint-disable*/  
+ /*jshint ignore:start*/  
+-var React = require('react');
+-var CanvasJS = require('@canvasjs/stockcharts');
+-CanvasJS = CanvasJS.Chart ? CanvasJS : window.CanvasJS;
++import React from 'react';  
++import CanvasJS from '@canvasjs/stockcharts';
++
++// Fix: Prevent reassignment of imported modules
++const CanvasJSInstance = CanvasJS.Chart ? CanvasJS : window.CanvasJS;
+ 
+ class CanvasJSChart extends React.Component {  
+-	constructor(props) {
+-		super(props);
+-		this.options = props.options ? props.options : {};
+-		this.containerProps = props.containerProps ? { ...props.containerProps } : { width: "100%", position: "relative" };
+-		this.containerProps.height = props.containerProps && props.containerProps.height ? props.containerProps.height : this.options.height ? this.options.height + "px" : "400px";
+-		this.containerRef = React.createRef();
+-	}
+-	componentDidMount() {
+-		//Create Chart and Render
+-		this.chart = new CanvasJS.Chart(this.containerRef.current, this.options);
+-		this.chart.render();
+-
+-		if (this.props.onRef)
+-			this.props.onRef(this.chart);
+-	}
+-	shouldComponentUpdate(nextProps, nextState) {
+-		//Check if Chart-options has changed and determine if component has to be updated
+-		return !(nextProps.options === this.options);
+-	}
+-	componentDidUpdate() {
+-		//Update Chart Options & Render
+-		this.chart.options = this.props.options;
+-		this.chart.render();
+-	}
+-	componentWillUnmount() {
+-		//Destroy chart and remove reference
+-		if (this.chart)
+-			this.chart.destroy();
+-
+-		if (this.props.onRef)
+-			this.props.onRef(undefined);
+-	}
+-	render() {
+-		return React.createElement('div', { id: this.props.id, ref: this.containerRef, style: this.containerProps });
+-		//return <div id={this.props.id} ref={this.containerRef} style={this.containerProps} />
+-	}
++    constructor(props) {  
++        super(props);  
++        this.options = props.options ? props.options : {};  
++        this.containerProps = props.containerProps ? { ...props.containerProps } : { width: "100%", position: "relative" };  
++        this.containerProps.height = props.containerProps && props.containerProps.height ? props.containerProps.height : this.options.height ? this.options.height + "px" : "400px";  
++        this.containerRef = React.createRef();  
++    }  
++
++    componentDidMount() {  
++        // Fix: Use CanvasJSInstance instead of CanvasJS  
++        this.chart = new CanvasJSInstance.Chart(this.containerRef.current, this.options);  
++        this.chart.render();  
++
++        if (this.props.onRef)  
++            this.props.onRef(this.chart);  
++    }  
++
++    shouldComponentUpdate(nextProps) {  
++        return !(nextProps.options === this.options);  
++    }  
++
++    componentDidUpdate() {  
++        this.chart.options = this.props.options;  
++        this.chart.render();  
++    }  
++
++    componentWillUnmount() {  
++        if (this.chart) this.chart.destroy();  
++
++        if (this.props.onRef)  
++            this.props.onRef(undefined);  
++    }  
++
++    render() {  
++        return React.createElement('div', { id: this.props.id, ref: this.containerRef, style: this.containerProps });  
++    }  
+ }  
+ 
+ class CanvasJSStockChart extends React.Component {  
+-	constructor(props) {
+-		super(props);
+-		this.options = props.options ? props.options : {};
+-		this.containerProps = props.containerProps ? { ...props.containerProps } : { width: "100%", position: "relative" };
+-		this.containerProps.height = props.containerProps && props.containerProps.height ? props.containerProps.height : this.options.height ? this.options.height + "px" : "600px";
+-		this.containerRef = React.createRef();
+-	}
+-	componentDidMount() {
+-		//Create StockChart and Render
+-		this.stockChart = new CanvasJS.StockChart(this.containerRef.current, this.options);
+-		this.stockChart.render();
+-
+-		if (this.props.onRef)
+-			this.props.onRef(this.stockChart);
+-	}
+-	shouldComponentUpdate(nextProps, nextState) {
+-		//Check if StockChart-options has changed and determine if component has to be updated
+-		return !(nextProps.options === this.options);
+-	}
+-	componentDidUpdate() {
+-		//Update StockChart Options & Render
+-		this.stockChart.options = this.props.options;
+-		this.stockChart.render();
+-	}
+-	componentWillUnmount() {
+-		//Destroy StockChart and remove reference
+-		if (this.stockChart)
+-			this.stockChart.destroy();
+-
+-		if (this.props.onRef)
+-			this.props.onRef(undefined);
+-	}
+-	render() {
+-		return React.createElement('div', { id: this.props.id, ref: this.containerRef, style: this.containerProps });
+-		//return <div id={this.props.id} ref={this.containerRef} style={this.containerProps} />
+-	}
++    constructor(props) {  
++        super(props);  
++        this.options = props.options ? props.options : {};  
++        this.containerProps = props.containerProps ? { ...props.containerProps } : { width: "100%", position: "relative" };  
++        this.containerProps.height = props.containerProps && props.containerProps.height ? props.containerProps.height : this.options.height ? this.options.height + "px" : "600px";  
++        this.containerRef = React.createRef();  
++    }  
++
++    componentDidMount() {  
++        // Fix: Use CanvasJSInstance instead of CanvasJS  
++        this.stockChart = new CanvasJSInstance.StockChart(this.containerRef.current, this.options);  
++        this.stockChart.render();  
++
++        if (this.props.onRef)  
++            this.props.onRef(this.stockChart);  
++    }  
++
++    shouldComponentUpdate(nextProps) {  
++        return !(nextProps.options === this.options);  
++    }  
++
++    componentDidUpdate() {  
++        this.stockChart.options = this.props.options;  
++        this.stockChart.render();  
++    }  
++
++    componentWillUnmount() {  
++        if (this.stockChart) this.stockChart.destroy();  
++
++        if (this.props.onRef)  
++            this.props.onRef(undefined);  
++    }  
++
++    render() {  
++        return React.createElement('div', { id: this.props.id, ref: this.containerRef, style: this.containerProps });  
++    }  
+ }  
+ 
+-var CanvasJSReact = {
+-	CanvasJSChart: CanvasJSChart,
+-	CanvasJSStockChart: CanvasJSStockChart,
+-	CanvasJS: CanvasJS
++const CanvasJSReact = {  
++    CanvasJSChart: CanvasJSChart,  
++    CanvasJSStockChart: CanvasJSStockChart,  
++    CanvasJS: CanvasJSInstance  
+ };  
+ 
+ export default CanvasJSReact;  
