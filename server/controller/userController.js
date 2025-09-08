@@ -82,23 +82,64 @@ export const findUserByEmail = async (req, res, next) => {
     res.status(404).json({ msg: "user not found" });
   }
 };
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { StatusCodes } from "http-status-codes";
+import { UnauthorisedError, BadRequestError, InternalServerError } from "../errors/index.js";
 
 export const login = async (req, res, next) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email: email });
-  if (!user) return next(new UnauthorisedError("invalid credentials"));
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return next(new UnauthorisedError("invalid credentials"));
-  const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-    expiresIn: expiresIn,
-  });
-  res.cookie("token", token, {
-    httpOnly: true,
-    maxAge: 86400000,
-    secure: true,
-    SameSite: "None",
-  });
-  res.status(StatusCodes.OK).json({ msg: "login sucessful" });
+  try {
+    const { email, password } = req.body;
+
+    // Check for missing fields
+    if (!email || !password) {
+      console.warn("Login failed: Missing email or password");
+      return next(new BadRequestError("Email and password are required"));
+    }
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.warn(`Login failed: No user found for email ${email}`);
+      return next(new UnauthorisedError("Invalid credentials"));
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      console.warn(`Login failed: Incorrect password for user ${email}`);
+      return next(new UnauthorisedError("Invalid credentials"));
+    }
+
+    // Generate token
+    let token;
+    try {
+      token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.expiresIn || "1d"
+      });
+    } catch (err) {
+      console.error("JWT signing failed:", err.message);
+      return next(new InternalServerError("Token generation failed"));
+    }
+
+    // Set cookie
+    try {
+      res.cookie("token", token, {
+        httpOnly: false, // ⚠️ Consider switching to true in production
+        secure: true,
+        sameSite: "None", // ✅ lowercase 'sameSite'
+        maxAge: 86400000
+      });
+    } catch (err) {
+      console.error("Cookie setting failed:", err.message);
+      return next(new InternalServerError("Failed to set authentication cookie"));
+    }
+
+    res.status(StatusCodes.OK).json({ msg: "Login successful" });
+  } catch (err) {
+    console.error("Unexpected login error:", err.message);
+    next(new InternalServerError("Unexpected server error during login"));
+  }
 };
 
 export const logout = async (req, res, next) => {
