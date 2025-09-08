@@ -1,0 +1,8 @@
+# STORY ENGINE
+
+## Live Deployment
+https://the-story-engine.onrender.com
+#### NOTE: SINCE ITS FREE VERSION, SERVERS SPIN DOWN DIE TO INACTIVITY START SERVERS TAKE UPTO 1 MIN TO LOAD THE SITE
+
+### LINK TO VIDEO AND PPT
+https://drive.google.com/drive/folders/1rcR_AZQo1WzRIpDesKaTUZcXxftaMrtz?usp=sharing
