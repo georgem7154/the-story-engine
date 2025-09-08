@@ -17,6 +17,7 @@ router.route("/").get(getAllUsers).post(validatePassword, createUser);
 router.route("/:id").delete(deleteUser).patch(updateUser).get(getUser);
 router.route("/find/userbyemail").get(findUserByEmailFromToken);
 router.route("/login/user").post(login);
+router.route("/find/user").get(findUserByEmail)
 router.route("/logout/user").post(logout);
 router.route("/verifytoken/user").get(verifyToken);
 
