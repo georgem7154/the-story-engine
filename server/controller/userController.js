@@ -116,7 +116,7 @@ export const login = async (req, res, next) => {
       });
     } catch (err) {
       console.error("JWT signing failed:", err.message);
-      return next(new InternalServerError("Token generation failed"));
+      return next(new Error("Token generation failed"));
     }
 
     // Set cookie
