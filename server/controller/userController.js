@@ -112,7 +112,7 @@ export const login = async (req, res, next) => {
     let token;
     try {
       token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.expiresIn || "1d"
+        expiresIn: "1d"
       });
     } catch (err) {
       console.error("JWT signing failed:", err.message);
@@ -129,13 +129,13 @@ export const login = async (req, res, next) => {
       });
     } catch (err) {
       console.error("Cookie setting failed:", err.message);
-      return next(new InternalServerError("Failed to set authentication cookie"));
+      return next(new Error("Failed to set authentication cookie"));
     }
 
     res.status(StatusCodes.OK).json({ msg: "Login successful" });
   } catch (err) {
     console.error("Unexpected login error:", err.message);
-    next(new InternalServerError("Unexpected server error during login"));
+    next(new Error("Unexpected server error during login"));
   }
 };
 
@@ -149,19 +149,34 @@ export const logout = async (req, res, next) => {
 
 export const verifyToken = async (req, res) => {
   const { token } = req.cookies;
-  if (!token)
+
+  // Log incoming cookies
+  console.log("🔍 Incoming cookies:", req.cookies);
+
+  if (!token) {
+    console.warn("🚫 Token missing in request cookies");
     return res.status(401).json({ message: "Unauthorized, token missing" });
+  }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    // Log token presence
+    console.log("🔐 Verifying token:", token);
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Log decoded payload
+    console.log("✅ Token decoded:", decoded);
 
     if (!decoded.userId) {
+      console.warn("⚠️ Token decoded but missing userId");
       return res.status(400).json({ message: "Invalid userId in token" });
     }
 
     req.userId = decoded.userId;
+    console.log(`🔓 Token verified for userId: ${req.userId}`);
     res.status(200).json({ message: "Protected content", userId: req.userId });
   } catch (error) {
+    console.error("❌ Token verification failed:", error.message);
     return res.status(403).json({ message: "Invalid or expired token" });
   }
 };
