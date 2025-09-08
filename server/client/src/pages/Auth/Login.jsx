@@ -46,7 +46,7 @@ function MovingStars() {
   );
 }
 
-const Login = () => {
+const Login = ({ authChecker, setAuthChecker }) => {
   const prevPage = localStorage.getItem("prevPage");
   const navigate = useNavigate();
   const [showpwd, setShowPwd] = useState(false);
@@ -79,7 +79,8 @@ const Login = () => {
       );
       
       // Using navigate for smoother transitions within React Router
-      toast.success("Successfully logged in");
+      setAuthChecker(true);
+      toast.success("Successfully logged in");  
       if (prevPage === "/register") {
         navigate("/");
         localStorage.removeItem("prevPage"); // Clear after redirect
