@@ -8,5 +8,7 @@ https://the-story-engine.onrender.com
 EMAIL: ggg2@gmail.com
 PASSWORD: Gamer123##
 
+### IF API GETS EXHAUSTED AND IT DOESNT WORK PLS TELL US
+
 ### LINK TO VIDEO AND PPT
 https://drive.google.com/drive/folders/1rcR_AZQo1WzRIpDesKaTUZcXxftaMrtz?usp=sharing
