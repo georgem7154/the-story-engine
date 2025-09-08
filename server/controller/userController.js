@@ -24,21 +24,43 @@ export const getUser = async (req, res, next) => {
   if (!user) return next(new NotFoundError("No user found"));
   res.status(200).json({ user });
 };
+
 export const createUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || !email || !password)
-      return next(new BadRequestError("missing values"));
-    // const exist = await User.findOne({ email: email });
-    // if (exist) return next(new BadRequestError("email exsists"));
+
+    // Log incoming payload
+    console.log("🔍 Incoming registration:", { name, email });
+
+    // Validate input
+    if (!name || !email || !password) {
+      console.warn("🚫 Missing required fields");
+      return next(new BadRequestError("Name, email, and password are required"));
+    }
+
+    // Check for existing user
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.warn(`⚠️ Email already exists: ${email}`);
+      return next(new BadRequestError("Email already registered"));
+    }
+
+    // Create and save new user
     const newUser = new User({ name, email, password });
 
-    await newUser.save();
-  } catch (error) {
-    // console.log(error);
-    return res.status(404).json({ msg: "error occoured" });
+    try {
+      await newUser.save();
+      console.log(`✅ User created: ${email}`);
+      return res.status(201).json({ msg: "User created successfully" });
+    } catch (saveError) {
+      console.error("❌ Error saving user:", saveError.message);
+      return next(new Error("Failed to save user to database"));
+    }
+
+  } catch (err) {
+    console.error("🔥 Unexpected error in createUser:", err.message);
+    return next(new Error("Unexpected server error during registration"));
   }
-  res.status(201).json({ msg: "user created" });
 };
 export const deleteUser = async (req, res, next) => {
   const { id } = req.params;

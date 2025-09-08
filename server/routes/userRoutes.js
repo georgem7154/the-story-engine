@@ -13,7 +13,7 @@ import {
   updateUser,
   verifyToken,
 } from "../controller/userController.js";
-router.route("/").get(getAllUsers).post(validatePassword, createUser);
+router.route("/").post(createUser);
 router.route("/:id").delete(deleteUser).patch(updateUser).get(getUser);
 router.route("/find/userbyemail").get(findUserByEmailFromToken);
 router.route("/login/user").post(login);
