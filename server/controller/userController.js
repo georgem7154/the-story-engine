@@ -82,10 +82,7 @@ export const findUserByEmail = async (req, res, next) => {
     res.status(404).json({ msg: "user not found" });
   }
 };
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import { StatusCodes } from "http-status-codes";
-import { UnauthorisedError, BadRequestError, InternalServerError } from "../errors/index.js";
+
 
 export const login = async (req, res, next) => {
   try {
